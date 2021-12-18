@@ -4,9 +4,11 @@ library(openxlsx)
 library(lubridate)
 
 program <- c("300", "315", "330", "345", "400", "415", "430", "500", "600")
+program <- c("400")
 week_nr <- 1:26
 
-urls <- str_glue("https://trana.marathon.se/asics-stockholm-marathon-2022/415-programmet/{week_nr}")
+
+urls <- str_glue("https://trana.marathon.se/asics-stockholm-marathon-2022/{program}-programmet/{week_nr}")
 urls
 
 resps <- map(urls, read_html)
@@ -41,6 +43,9 @@ df <- df %>% as_tibble()
 
 df_daily <- df %>% 
   select(1:6)
+
+
+7*26
 
 comments_vec <- comments %>% flatten() %>% plyr::ldply() %>% pull
 # alternativt:
