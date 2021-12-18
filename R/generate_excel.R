@@ -14,6 +14,10 @@ list_cleaned2
 # ---------------------
 # GENERATE EXCEL SHEET
 
+generate_comment <- function(comment_vec) {
+  map_if(comment_vec, .p = ~ !is.na(.), .f = createComment, visible = F, .else = ~ NA)
+}
+
 # header style
 hs1 <- createStyle(
   fontColour = "#ffffff", fgFill = "#4F80BD",
@@ -53,68 +57,26 @@ map2(.x = df_weekly_list, .y = names(df_weekly_list),
        )
        
        
-       #curr_comments <- df_list_of_weekly_comments[[name]]
+       curr_comments <- df_list_of_weekly_comments[[name]]
+       curr_comments <- curr_comments %>% 
+         select(-Week)
        
+       generated_comments_list <- curr_comments %>% 
+         map(generate_comment)
+       
+       for (i in seq_along(generated_comments_list)) {
+         comments_i <- generated_comments_list[[i]]
+         length(comments_i)
+         
+         # if its not NA (logical), write comment
+         map_if(1:length(comments_i), 
+                .p = ~class(comments_i[[.x]])!="logical",
+                .f = ~ writeComment(wb, sheet = curr_sheetname, col = i+1, row = .x+1, comment = comments_i[[.x]]))
+         
+       }
        
        saveWorkbook(wb, file = str_glue("Output/{name}_programmet.xlsx"), overwrite = T)
-       
-       
-       
+
      })
 
 
-
-generate_comment <- function(comment_vec) {
-  map_if(comment_vec, .p = ~ !is.na(.), .f = createComment, visible = F, .else = ~ NA)
-}
-
-curr_comments_tmp <- df_list_of_weekly_comments[["300"]]
-curr_comments_tmp <- curr_comments_tmp %>% 
-  select(-Week)
-
-generated_comments_list <- curr_comments_tmp %>% 
-  map(generate_comment)
-
-generated_comments_list[[5]][[1]]
-
-generated_comments_list %>% unlist() %>% tibble()
-
-
-1:26 %>% 
-  map_if(.p = ~class(c4[[.x]])!="logical",
-         .f = ~ writeComment(wb, sheet = curr_sheetname, col = i+1, row = .x+1, comment = generated_comments_list[[5]] ))
-
-i<-1
-for (i in seq_along(curr_comments_tmp)) {
-  # Generating comments
-  c_i <- map_if(curr_comments_tmp[[i]], .p = ~ !is.na(.), .f = createComment, visible = F, .else = ~ NA)
-  
-  # row id is used to calculate which rows to addthe comments to
-  map(data[[row_id]], 
-      .p = ~class(c4[[.x]])!="logical",
-      .f = ~ writeComment(wb, sheet = curr_sheetname, col = i+1, row = .x+1, comment = c_i[[.x]]))
-  
-}
-curr_comments_tmp
-
-
-df_weekly_list$`300`$Week
-c1 <- map_if(curr_comments_tmp$`1`, .p = ~ !is.na(.), .f = createComment, visible = F, .else = ~ NA)
-map(df_weekly_list$`300`$Week, ~ writeComment(wb, sheet = "4_15", col = 2, row = .x+1, comment = c1[[.x]]))
-
-# Generating comments
-c1 <- map_if(df_weekly_comments$`1`, .p = ~ !is.na(.), .f = createComment, visible = F, .else = ~ NA)
-c2 <- map_if(df_weekly_comments$`2`, .p = ~ !is.na(.), .f = createComment, visible = F, .else = ~ NA)
-c3 <- map_if(df_weekly_comments$`3`, .p = ~ !is.na(.), .f = createComment, visible = F, .else = ~ NA)
-c4 <- map_if(df_weekly_comments$`4`, .p = ~ !is.na(.), .f = createComment, visible = F, .else = ~ NA)
-
-# write comments:
-map(df_weekly$Week, ~ writeComment(wb, sheet = "4_15", col = 2, row = .x+1, comment = c1[[.x]]))
-map(df_weekly$Week, ~ writeComment(wb, sheet = "4_15", col = 3, row = .x+1, comment = c2[[.x]]))
-map(df_weekly$Week, ~ writeComment(wb, sheet = "4_15", col = 4, row = .x+1, comment = c3[[.x]]))
-# if its not NA (logical), write comment
-map_if(df_weekly$Week, .p = ~class(c4[[.x]])!="logical", .f = ~ writeComment(wb, sheet = "4_15", col = 5, row = .x+1, comment = c4[[.x]]))
-# class(c4[[1]])=="logical"
-
-saveWorkbook(wb, file = "test1.xlsx", overwrite = T)
-shell.exec("test1.xlsx")
