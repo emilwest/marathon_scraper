@@ -8,7 +8,6 @@ load("Data/info_list.RData")
 
 df_list_of_weekly_comments
 df_weekly_list
-list_cleaned2
 
 
 # ---------------------
@@ -31,14 +30,22 @@ map2(.x = df_weekly_list, .y = names(df_weekly_list),
        curr_sheetname <- str_glue("{name}_weekly")
        wb <- createWorkbook()
        addWorksheet(wb, curr_sheetname)
+       addWorksheet(wb, str_glue("{name}_daily"))
        addWorksheet(wb, "Info")
        modifyBaseFont(wb, fontSize = 12, fontColour = "black", fontName = "Arial Narrow")
        
        # Write data
+       # Weekly
        writeData(wb, sheet = curr_sheetname, data, withFilter = T, headerStyle = hs1)
        freezePane(wb, sheet = curr_sheetname, firstRow = T)
        setColWidths(wb, 1, cols = 1:ncol(data), widths = "auto")
        
+       # Daily
+       writeData(wb, sheet = str_glue("{name}_daily"), list_cleaned2[[name]], withFilter = T, headerStyle = hs1)
+       freezePane(wb, sheet = str_glue("{name}_daily"), firstRow = T)
+       setColWidths(wb, 1, cols = 1:ncol(list_cleaned2[[name]]), widths = "auto")
+       
+       # Info
        writeData(wb, sheet = "Info", 
                  info_list[[name]] %>% 
                    str_split("\n"), 
@@ -80,3 +87,8 @@ map2(.x = df_weekly_list, .y = names(df_weekly_list),
      })
 
 
+# DONE ta bort 0 på vecka 4 på 400-programmet 
+# DONE lägg till sheet för daily 
+# TODO jämför de olika programmen 
+# TODO ta fram statistik
+# hur tar man bort seconds på lubridate Period?

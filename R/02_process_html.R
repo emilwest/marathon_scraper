@@ -111,5 +111,10 @@ for (p in seq_along(out)) {
   list_cleaned[[curr_program]] <- df_daily
 }
 
+# Add missing 'Vila' for the following day
+list_cleaned$`400` <- list_cleaned$`400` %>% 
+  mutate(comment = ifelse(Week == 4 & day == 27, "Vila", comment))
+
+
 # list_cleaned$`400` %>% view
 # save(list_cleaned, file = "Data/list_cleaned.RData")
