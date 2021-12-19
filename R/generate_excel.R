@@ -89,6 +89,8 @@ map2(.x = df_weekly_list, .y = names(df_weekly_list),
 
 # DONE ta bort 0 på vecka 4 på 400-programmet 
 # DONE lägg till sheet för daily 
-# TODO jämför de olika programmen 
-# TODO ta fram statistik
+# DONE 330 -programmet saknar marathon-dagen
+# DONE 345 v. 21 har 0 km när det borde vara 25km
+
+# IN PROGRESS jämför de olika programmen / ta fram statistik
 # hur tar man bort seconds på lubridate Period?

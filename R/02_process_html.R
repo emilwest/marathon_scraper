@@ -111,9 +111,24 @@ for (p in seq_along(out)) {
   list_cleaned[[curr_program]] <- df_daily
 }
 
+# Correcting mistakes in source data: 
+
 # Add missing 'Vila' for the following day
 list_cleaned$`400` <- list_cleaned$`400` %>% 
   mutate(comment = ifelse(Week == 4 & day == 27, "Vila", comment))
+
+# 330-programmet is missing the marathon day, so we add it:
+list_cleaned$`330` <- list_cleaned$`330` %>% 
+  mutate(comment = ifelse(Week == 26 & day == 4, 
+                       "Uppvärmning\nDistans:1 kmTid:5-6 min\nDynamisk rörlighet\nTid:5 min\nTävling\nDistans:42,2 kmTid:3.30", 
+                       comment),
+         dist = ifelse(Week == 26 & day == 4, "43 km", dist),
+         tot_duration_min  = ifelse(Week == 26 & day == 4, "221 min", tot_duration_min) # 180+30+11
+         )
+  
+# 345 v. 21 is 0 km when it should be 25km so we correct it:
+list_cleaned$`345` <- list_cleaned$`345` %>% 
+  mutate(dist = ifelse(Week == 21 & day == 1, "25 km", dist))
 
 
 # list_cleaned$`400` %>% view
