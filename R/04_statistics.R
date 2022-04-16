@@ -1,6 +1,34 @@
 load("Data/df_weekly_list.RData")
 load("Data/list_cleaned2.RData")
 
+
+list_cleaned2 %>% 
+  map_df(
+    ~ .x %>% 
+      filter(comment != "Vila") %>% 
+      group_by(Week) %>% 
+      mutate(pass = row_number()) %>% 
+      ungroup() %>% 
+      summarise(n = n(),
+                snitt_pass_per_v = n/26,
+                max_pass_per_vecka = max(pass)),
+    .id = "Program"
+  ) 
+
+
+a <- list_cleaned2 %>% 
+  map_df(
+    ~ .x %>% 
+      filter(comment != "Vila") %>% 
+      group_by(Week) %>% 
+      mutate(pass = row_number()) %>% 
+      summarise(last_pass_id = min(last(pass))),
+    .id = "Program"
+  ) 
+
+# TODO: 
+# räkna hur många av de minsta passen som finns, typ en tally()
+
   
 # Weekly
 df <- df_weekly_list %>% 
