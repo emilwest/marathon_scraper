@@ -69,6 +69,24 @@ df_list_of_weekly_comments <- list_cleaned2 %>%
   )
 
 
+list_cleaned2 <- list_cleaned2 %>% 
+  map(
+    ~ .x %>% 
+      mutate(wday = case_when(
+        wday == "måndagmån" ~ "måndag",
+        wday == "tisdagtis" ~ "tisdag",
+        wday == "onsdagons" ~ "onsdag",
+        wday == "torsdagtors" ~ "torsdag",
+        wday == "fredagfre" ~ "fredag",
+        wday == "lördaglör" ~ "lördag",
+        wday == "söndagsön" ~ "söndag",
+        TRUE ~ as.character(wday)
+      ),
+      tot_duration_min = seconds_to_period(minutes(tot_duration_min))
+      )
+  )
+
+
 save(df_list_of_weekly_comments, file = "Data/df_list_of_weekly_comments.RData") # Comments to be added over wide format on excel
 save(df_weekly_list, file = "Data/df_weekly_list.RData") # Weekly observations, wide format
 save(list_cleaned2, file = "Data/list_cleaned2.RData") # Daily observations, long format
